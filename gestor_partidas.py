@@ -11,11 +11,12 @@ class Guardado():
                 nombre_partida text,
                 dias_jugados integer,
                 dinero integer,
-                contador_de_uvas integer,
+                contador_de_uvas_violetas integer,
+                contador_de_uvas_amarillas integer,
                 UNIQUE (nombre_partida)
             )"""
         )
-        cursor.execute(f"INSERT OR IGNORE INTO Inventario VALUES('partida_guardada_uno', 0, 0, 0)")
+        cursor.execute(f"INSERT OR IGNORE INTO Inventario VALUES('partida_guardada_uno', 0, 0, 0, 0)")
         cursor.execute(
             """CREATE TABLE IF NOT EXISTS viñedos (
                 nombre text,
@@ -29,6 +30,9 @@ class Guardado():
                 UNIQUE (fila, columna)
             )"""
         )
+        cursor.execute("SELECT * from inventario")
+        datos_inventario = cursor.fetchall()
+        var_glob.contador_de_uvas_violetas = datos_inventario[0][3]
         conn.commit()
         conn.close()
         self.cargar_partida()
@@ -121,7 +125,6 @@ class Guardado():
             pass
         else:
             if parra[6] == 1:
-                print("recoleccion efectuada")
                 for sprite in var_glob.sprites_de_construcciones:
                     x_de_la_parra = parra[1] * 24
                     y_de_la_parra = parra[2] * 24 - 8
@@ -130,13 +133,12 @@ class Guardado():
                 Parra_de_vid((x_de_la_parra, y_de_la_parra), [var_glob.sprites_de_construcciones], parra[3], rec = False)
                 cursor.execute("UPDATE viñedos SET recoleccion = 0 WHERE fila=? AND columna=?", (fila, columna))
                 uvas_producidas = 1 # Agregar función de número random, basado en los años y calidad de la parra
-                cursor.execute(f"UPDATE inventario SET contador_de_uvas = contador_de_uvas + {uvas_producidas}")
+                cursor.execute(f"UPDATE inventario SET contador_de_uvas_violetas = contador_de_uvas_violetas + {uvas_producidas}")
                 cursor.execute("SELECT * from inventario")
                 datos_inventario = cursor.fetchall()
-                var_glob.contador_de_uvas = datos_inventario[0][3]
+                var_glob.contador_de_uvas_violetas = datos_inventario[0][3]
 
             else:
-                print("a")
                 pass
         conn.commit()
         conn.close()

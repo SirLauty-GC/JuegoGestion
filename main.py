@@ -8,23 +8,10 @@ from gestor_partidas import Guardado
 
 pygame.init()
 
-# Configuración de pantalla
-limite_pantalla = 48
-velocidad_camara = 8
-
 TIMER_EVENT = pygame.USEREVENT + 1
 pygame.time.set_timer(TIMER_EVENT, 1000) 
 
 clock = pygame.time.Clock()
-def movimiento_camara():
-    var_glob.sprites_de_fondo.update()
-    for sprite in var_glob.sprites_de_fondo:
-        var_glob.screen.blit(sprite.image, (sprite.rect.x + var_glob.offset_x, sprite.rect.y + var_glob.offset_y))
-    for sprite in var_glob.sprites_de_construcciones:
-        var_glob.screen.blit(sprite.image, (sprite.rect.x + var_glob.offset_x, sprite.rect.y + var_glob.offset_y))
-    for sprites in var_glob.sprites_interfaz_principal:
-        for sprite in sprites:
-            var_glob.screen.blit(sprite.icono, (sprite.rect.x, sprite.rect.y))
 
 iniciar = True
 class Juego:
@@ -47,7 +34,7 @@ class Juego:
                             self.guardado.actualizar_dias()
                             var_glob.dia_de_juego = var_glob.dia_de_juego + 1
                             print("dias de juego:", var_glob.dia_de_juego)
-                            print("Uvas:", var_glob.contador_de_uvas)
+                            print("Uvas:", var_glob.contador_de_uvas_violetas)
 
                 var_glob.screen.fill((155,155,155))
 
@@ -92,27 +79,52 @@ class Juego:
                                     tile = self.jugabilidad.detectar_tile(mouse_x, mouse_y, var_glob.offset_x, var_glob.offset_y)
                                     if tile:
                                         self.jugabilidad.recolectar_produccion(tile)
+                
+                if self.menu_principal.is_clicked(event):
+                    if var_glob.modo_menu_inicio:
+                        if var_glob.boton_menu_principal == "jugar":
+                            if var_glob.modo_menu_inicio:
+                                var_glob.modo_menu_inicio = False
+                        if var_glob.boton_menu_principal == "opciones":
+                            print("opciones")
+                        if var_glob.boton_menu_principal == "salir":
+                            sys.exit()
+                
+                if self.interfaz.is_clicked(event):
+                    if var_glob.modo_menu_inicio == False:
+                        if var_glob.boton_interfaz == "construccion":
+                            var_glob.modo_construccion = not var_glob.modo_construccion
+                            var_glob.modo_const_parra_de_vid = not var_glob.modo_const_parra_de_vid
+                            var_glob.modo_demolicion = False
+
+                        if var_glob.boton_interfaz == "demolicion":
+                            var_glob.modo_demolicion = not var_glob.modo_demolicion
+                            var_glob.modo_construccion = False
+                            var_glob.modo_const_parra_de_vid = False
+                        self.interfaz.valores_interfaz()
+                        self.interfaz.crear_botones()
                             
             if var_glob.modo_menu_inicio:
-                self.menu_principal.boton_jugar()
+                self.menu_principal.panel_menu_principal()
             else:
+
+                # Movimiento de la cámara
                 mouse_x, mouse_y = pygame.mouse.get_pos()
 
-                if mouse_x < limite_pantalla:  # Izquierda
+                if mouse_x < var_glob.limite_pantalla:  # Izquierda
                     if var_glob.offset_x < 0:
-                        var_glob.offset_x += velocidad_camara
-                if mouse_x > var_glob.ancho_pantalla - limite_pantalla:  # Derecha
+                        var_glob.offset_x += var_glob.velocidad_camara
+                if mouse_x > var_glob.ancho_pantalla - var_glob.limite_pantalla:  # Derecha
                     if var_glob.offset_x > var_glob.ancho_pantalla - var_glob.ancho_mundo:
-                        var_glob.offset_x -= velocidad_camara
-                if mouse_y < limite_pantalla:  # Arriba
+                        var_glob.offset_x -= var_glob.velocidad_camara
+                if mouse_y < var_glob.limite_pantalla:  # Arriba
                     if var_glob.offset_y < 0:
-                        var_glob.offset_y += velocidad_camara
-                if mouse_y > var_glob.alto_pantalla - limite_pantalla:  # Abajo
+                        var_glob.offset_y += var_glob.velocidad_camara
+                if mouse_y > var_glob.alto_pantalla - var_glob.limite_pantalla:  # Abajo
                     if var_glob.offset_y > var_glob.alto_pantalla - var_glob.alto_mundo:
-                        var_glob.offset_y -= velocidad_camara
-                
-                movimiento_camara()
-                
+                        var_glob.offset_y -= var_glob.velocidad_camara
+                self.jugabilidad.movimiento_camara()
+                self.interfaz.valores_interfaz()
             pygame.display.update()
             clock.tick(60)
 

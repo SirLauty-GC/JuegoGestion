@@ -9,6 +9,19 @@ class Jugabilidad():
         self.mamapa = Mapa
         self.guardado = Guardado
         self.guardado()
+
+    def movimiento_camara(self):
+        var_glob.sprites_de_fondo.update()
+        for sprite in var_glob.sprites_de_fondo:
+            var_glob.screen.blit(sprite.image, (sprite.rect.x + var_glob.offset_x, sprite.rect.y + var_glob.offset_y))
+        for sprite in var_glob.sprites_de_construcciones:
+            var_glob.screen.blit(sprite.image, (sprite.rect.x + var_glob.offset_x, sprite.rect.y + var_glob.offset_y))
+        for sprites in var_glob.sprites_interfaz_principal:
+            for sprite in sprites:
+                var_glob.screen.blit(sprite.sprite_verific, sprite.ubicacion_x_y)
+                var_glob.screen.blit(sprite.sprite_texto, sprite.text_ubic)
+                var_glob.screen.blit(sprite.sprite_icono, sprite.ubicacion_x_y)
+                
     def detectar_tile(self, mouse_x, mouse_y, offset_x, offset_y):
         global_x = mouse_x - offset_x
         global_y = mouse_y - offset_y
