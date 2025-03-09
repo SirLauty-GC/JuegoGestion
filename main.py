@@ -25,11 +25,12 @@ class Juego:
     def corre_juego(self):
         while iniciar:
             for event in pygame.event.get():
+                # Tiempo
                 if event.type == TIMER_EVENT:
                     if var_glob.modo_menu_inicio == False:
                         var_glob.segundos_de_juego = var_glob.segundos_de_juego + 1
 
-                        if var_glob.segundos_de_juego == 1:
+                        if var_glob.segundos_de_juego == 10:
                             var_glob.segundos_de_juego = 0
                             self.guardado.actualizar_dias()
                             var_glob.dia_de_juego = var_glob.dia_de_juego + 1
@@ -41,10 +42,10 @@ class Juego:
                 if event.type == pygame.QUIT:
                     sys.exit()
                 
+                # Teclado
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
                         var_glob.modo_construccion = not var_glob.modo_construccion
-                        var_glob.modo_const_parra_de_vid = not var_glob.modo_const_parra_de_vid
                         var_glob.modo_demolicion = False
                         self.interfaz.crear_botones()
 
@@ -52,33 +53,44 @@ class Juego:
                         var_glob.modo_demolicion = not var_glob.modo_demolicion
                         var_glob.modo_construccion = False
                         var_glob.modo_const_parra_de_vid = False
+                        var_glob.modo_const_lagar_de_cuero = False
                         self.interfaz.crear_botones()
-                    
+
+                    if event.key == pygame.K_1:
+                        if var_glob.modo_construccion:
+                            var_glob.modo_const_parra_de_vid = not var_glob.modo_const_parra_de_vid
+                            var_glob.modo_demolicion = False
+
+                    if event.key == pygame.K_2:
+                        if var_glob.modo_construccion:
+                            var_glob.modo_const_lagar_de_cuero = not var_glob.modo_const_lagar_de_cuero
+                            var_glob.modo_demolicion = False
                     
                     if event.key == pygame.K_SPACE:
                         if var_glob.modo_menu_inicio:
                             var_glob.modo_menu_inicio = False
 
+                # Mouse
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                        if event.button == 1:
-                            if var_glob.modo_menu_inicio == False:
-                                if var_glob.modo_construccion == True:
-                                    mouse_x, mouse_y = pygame.mouse.get_pos()
-                                    tile = self.jugabilidad.detectar_tile(mouse_x, mouse_y, var_glob.offset_x, var_glob.offset_y)
-                                    if tile:
-                                        self.jugabilidad.construir(tile)
+                    if event.button == 1:
+                        if var_glob.modo_menu_inicio == False:
+                            if var_glob.modo_construccion == True:
+                                mouse_x, mouse_y = pygame.mouse.get_pos()
+                                tile = self.jugabilidad.detectar_tile(mouse_x, mouse_y, var_glob.offset_x, var_glob.offset_y)
+                                if tile:
+                                    self.jugabilidad.construir(tile)
 
-                                if var_glob.modo_demolicion == True:
-                                    mouse_x, mouse_y = pygame.mouse.get_pos()
-                                    tile = self.jugabilidad.detectar_tile(mouse_x, mouse_y, var_glob.offset_x, var_glob.offset_y)
-                                    if tile:
-                                        self.jugabilidad.eliminar_parra(tile)
-                                
-                                if var_glob.modo_construccion == False & var_glob.modo_demolicion == False:
-                                    mouse_x, mouse_y = pygame.mouse.get_pos()
-                                    tile = self.jugabilidad.detectar_tile(mouse_x, mouse_y, var_glob.offset_x, var_glob.offset_y)
-                                    if tile:
-                                        self.jugabilidad.recolectar_produccion(tile)
+                            if var_glob.modo_demolicion == True:
+                                mouse_x, mouse_y = pygame.mouse.get_pos()
+                                tile = self.jugabilidad.detectar_tile(mouse_x, mouse_y, var_glob.offset_x, var_glob.offset_y)
+                                if tile:
+                                    self.jugabilidad.eliminar_construccion(tile)
+                            
+                            if var_glob.modo_construccion == False & var_glob.modo_demolicion == False:
+                                mouse_x, mouse_y = pygame.mouse.get_pos()
+                                tile = self.jugabilidad.detectar_tile(mouse_x, mouse_y, var_glob.offset_x, var_glob.offset_y)
+                                if tile:
+                                    self.jugabilidad.recolectar_produccion(tile)
                 
                 if self.menu_principal.is_clicked(event):
                     if var_glob.modo_menu_inicio:

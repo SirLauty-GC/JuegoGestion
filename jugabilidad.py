@@ -3,6 +3,7 @@ import var_glob
 from cargar_mapa import Mapa
 from gestor_partidas import Guardado
 from objets.construcciones.parra_de_vid import Parra_de_vid
+from objets.construcciones.lagar_de_cuero import Lagar_de_cuero
 
 class Jugabilidad():
     def __init__(self):
@@ -31,31 +32,48 @@ class Jugabilidad():
 
         if 0 <= tile_y < len(var_glob.mapa_cargardo) and 0 <= tile_x < len(var_glob.mapa_cargardo[0]):
             return var_glob.mapa_cargardo[tile_y][tile_x], tile_x, tile_y
-        return None
+        else:
+            return None
 
     def construir(self, tile):
         if tile[0] == 'a':
             return
         else:
-            #rot = var_glob.modo_const_rotada
+            fila, columna = tile[1], tile[2]
+            tile_x, tile_y = fila * 24, columna * 24
             if var_glob.modo_const_parra_de_vid == True: # Parra de vid
-                #if rot == 0 or rot == 2:
-                fila, columna = tile[1], tile[2]
-                tile_x, tile_y = fila * 24, columna * 24
-                guardado_confirmación = self.guardado.guardar_construccion_de_parra('parra', fila, columna)
-                if guardado_confirmación:
-                    tile = Parra_de_vid((tile_x, tile_y-8), [var_glob.sprites_de_construcciones], 0, False)
-                else:
-                    pass
+                verificacion = self.guardado.detectar_casillas_disponibles(fila, columna, 1, 1) #fila, columna, ancho, alto
+                if verificacion:
+                    guardado_confirmación = self.guardado.guardar_construccion('parra', fila, columna, 1, 1)
+                    if guardado_confirmación:
+                        tile = Parra_de_vid((tile_x, tile_y-8), [var_glob.sprites_de_construcciones], 0, False)
+                    else:
+                        pass
 
-    def eliminar_parra(self, tile):
+            elif var_glob.modo_const_lagar_de_cuero == True: # Lagares
+                verificacion = self.guardado.detectar_casillas_disponibles(fila, columna, 2, 1) #fila, columna, ancho, alto
+                if verificacion:
+                    guardado_confirmación = self.guardado.guardar_construccion('lagar', fila, columna, 2, 1)
+                    if guardado_confirmación:
+                        tile = Lagar_de_cuero((tile_x, tile_y), [var_glob.sprites_de_construcciones])
+                    else:
+                        pass
+                
+    def eliminar_construccion(self, tile):
         fila, columna = tile[1], tile[2]
-        tile_x, tile_y = fila * 24, columna * 24 - 8
-        for sprite in var_glob.sprites_de_construcciones:
-            if isinstance(sprite, Parra_de_vid) and sprite.rect.topleft == (tile_x, tile_y):
-                sprite.kill()
-        self.guardado.eliminar_construccion_de_parra(fila, columna)
-        
+        valores_construccion = self.guardado.eliminar_construccion(fila, columna)
+        lista_de_construcciones = [Parra_de_vid, Lagar_de_cuero]
+        if valores_construccion:
+            tile_x, tile_y = valores_construccion[1] * 24, valores_construccion[2] * 24
+            for sprite in var_glob.sprites_de_construcciones:
+                for construccion in lista_de_construcciones:
+                    if valores_construccion[0] == 'parra':
+                        if isinstance(sprite, construccion) and sprite.rect.topleft == (tile_x, tile_y - 8):
+                            sprite.kill()
+                    else:
+                        if isinstance(sprite, construccion) and sprite.rect.topleft == (tile_x, tile_y):
+                            sprite.kill()
+    
     def recolectar_produccion(self, tile):
         fila, columna = tile[1], tile[2]
         self.guardado.recoleccion_de_produccion(fila, columna)

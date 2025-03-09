@@ -41,6 +41,7 @@ modo_demolicion = False
 
 # Construccion
 modo_const_parra_de_vid = False
+modo_const_lagar_de_cuero = False
 
 # Colores
 color_blanco = (255, 255, 255)
