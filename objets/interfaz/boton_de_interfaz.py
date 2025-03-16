@@ -19,6 +19,6 @@ class Boton_de_interfaz(pygame.sprite.Sprite):
         self.text_rect = self.sprite_texto.get_rect(topleft=text_ubic)
 
     def update(self):
-        var_glob.screen.blit(self.sprite_verific, self.ubicacion_x_y)
-        var_glob.screen.blit(self.sprite_icono, self.ubicacion_x_y)
-        var_glob.screen.blit(self.sprite_texto, self.text_rect)
+        var_glob.complete_screen.blit(self.sprite_verific, self.ubicacion_x_y)
+        var_glob.complete_screen.blit(self.sprite_icono, self.ubicacion_x_y)
+        var_glob.complete_screen.blit(self.sprite_texto, self.text_rect)

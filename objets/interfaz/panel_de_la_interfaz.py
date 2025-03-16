@@ -2,9 +2,11 @@ import pygame
 import var_glob
 
 class Panel_de_la_interfaz(pygame.sprite.Sprite):
-    def __init__(self, grupo, x, y):
+    def __init__(self, grupo, x, y, ancho, alto, color):
         super().__init__(grupo)
-        self.sprite_icono = pygame.image.load("./assets/sprites/ui/panel.png")
-        self.ubicacion_x_y, self.text_ubic = (x, y), (x, y)
-        self.sprite_verific, self.sprite_texto = pygame.image.load("./assets/sprites/ui/panel.png"), pygame.image.load("./assets/sprites/ui/panel.png")
-        var_glob.screen.blit(self.sprite_icono, self.ubicacion_x_y)
+        self.sprite_icono = pygame.Rect(x,y,ancho,alto)
+        self.color = color
+        pygame.draw.rect(var_glob.complete_screen, self.color, self.sprite_icono)
+    
+    def obtener_recta(self):
+        return self.sprite_icono

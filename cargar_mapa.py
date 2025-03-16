@@ -1,13 +1,11 @@
 import pygame
 import csv
 import var_glob
-import numpy as np
 from objets.terreno.mar import Mar
 from objets.terreno.montana import Montana
 from objets.terreno.colina import Colina
 from objets.terreno.arena import Arena
 from objets.terreno.pasto import Pasto
-from objets.construcciones.parra_de_vid import Parra_de_vid
 
 def leer_mapa(ruta):
     with open(ruta, newline='') as archivo:

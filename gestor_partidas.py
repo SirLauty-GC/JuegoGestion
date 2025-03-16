@@ -64,6 +64,23 @@ class Guardado():
                 if nuevas_casillas & casillas_ocupadas:
                     return False
             return True
+    
+    def consulta_datos_de_construccion(self, fila_consulta, columna_consulta):
+        conn = sql.connect(f"./partidas/{var_glob.partida_guardada_actual}.db")
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT * FROM construcciones
+            WHERE ? >= fila AND ? < fila + ancho
+            AND ? >= columna AND ? < columna + alto
+        """, (fila_consulta, fila_consulta, columna_consulta, columna_consulta))
+        resultado = cursor.fetchone()
+        if resultado == None:
+            valores_construccion = None
+        else:
+            valores_construccion = resultado
+        conn.commit()
+        conn.close()
+        return valores_construccion
 
     def guardar_construccion(nombre, fila, columna, ancho, alto):
         conn = sql.connect(f"./partidas/{var_glob.partida_guardada_actual}.db")
@@ -99,13 +116,13 @@ class Guardado():
                                 WHEN dias_para_producir = 9 THEN 1 
                                 ELSE recoleccion
                             END
-                        WHERE nombre = 'parra' AND dias_construido > 16 AND recoleccion = 0""")
+                        WHERE nombre = 'Parra' AND dias_construido > 16 AND recoleccion = 0""")
         cursor.execute("SELECT * FROM construcciones WHERE recoleccion = 1")
         vid_para_dar_uva = cursor.fetchall()
 
         # Crecimiento de la parra de vid
         for parra in vid_para_actualizar:
-            if parra[0] == "parra":
+            if parra[0] == "Parra":
                 x_de_la_parra = parra[1] * 24
                 y_de_la_parra = parra[2] * 24 - 8
                 for sprite in var_glob.sprites_de_construcciones:
@@ -183,7 +200,7 @@ class Guardado():
         conn.commit()
         conn.close()
         for construccion in datos:
-            if construccion[0] == "parra":
+            if construccion[0] == "Parra":
                 x_de_la_construccion = construccion[1] * 24
                 y_de_la_construccion = construccion[2] * 24 - 8
                 if construccion[8] == 1:
@@ -192,7 +209,7 @@ class Guardado():
                     valor_recoleccion = False
                 Parra_de_vid((x_de_la_construccion, y_de_la_construccion), [var_glob.sprites_de_construcciones], construccion[5], rec = valor_recoleccion)
                 
-            if construccion[0] == "lagar":
+            if construccion[0] == "Lagar":
                 x_de_la_construccion = construccion[1] * 24
                 y_de_la_construccion = construccion[2] * 24
                 Lagar_de_cuero((x_de_la_construccion, y_de_la_construccion), [var_glob.sprites_de_construcciones])

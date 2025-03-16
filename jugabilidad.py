@@ -14,14 +14,37 @@ class Jugabilidad():
     def movimiento_camara(self):
         var_glob.sprites_de_fondo.update()
         for sprite in var_glob.sprites_de_fondo:
-            var_glob.screen.blit(sprite.image, (sprite.rect.x + var_glob.offset_x, sprite.rect.y + var_glob.offset_y))
+            var_glob.complete_screen.blit(sprite.image, (sprite.rect.x + var_glob.offset_x, sprite.rect.y + var_glob.offset_y))
         for sprite in var_glob.sprites_de_construcciones:
-            var_glob.screen.blit(sprite.image, (sprite.rect.x + var_glob.offset_x, sprite.rect.y + var_glob.offset_y))
+            var_glob.complete_screen.blit(sprite.image, (sprite.rect.x + var_glob.offset_x, sprite.rect.y + var_glob.offset_y))
+        
+        # Interfaz 
+        
+        for sprites in var_glob.menu_de_objeto_rectangulos:
+            if sprites:
+                for sprite in sprites:
+                    if sprite:
+                        pygame.draw.rect(var_glob.complete_screen, sprite.color, sprite.sprite_icono)
+        for sprites in var_glob.menu_de_objeto_botones_o_datos:
+            if sprites:
+                for sprite in sprites:
+                    if sprite:
+                        var_glob.complete_screen.blit(sprite.sprite_icono, sprite.ubicacion_x_y)
+        for sprites in var_glob.menu_de_objeto_texto:
+            if sprites:
+                for sprite in sprites:
+                    if sprite:
+                        var_glob.complete_screen.blit(sprite.sprite_texto, sprite.text_rect)
+
+        for sprites in var_glob.rectangulos_interfaz_principal:
+            for sprite in sprites:
+                pygame.draw.rect(var_glob.complete_screen, var_glob.color_azul_oscuro, sprite.sprite_icono)
+
         for sprites in var_glob.sprites_interfaz_principal:
             for sprite in sprites:
-                var_glob.screen.blit(sprite.sprite_verific, sprite.ubicacion_x_y)
-                var_glob.screen.blit(sprite.sprite_texto, sprite.text_ubic)
-                var_glob.screen.blit(sprite.sprite_icono, sprite.ubicacion_x_y)
+                var_glob.complete_screen.blit(sprite.sprite_verific, sprite.ubicacion_x_y)
+                var_glob.complete_screen.blit(sprite.sprite_texto, sprite.text_ubic)
+                var_glob.complete_screen.blit(sprite.sprite_icono, sprite.ubicacion_x_y)
                 
     def detectar_tile(self, mouse_x, mouse_y, offset_x, offset_y):
         global_x = mouse_x - offset_x
@@ -44,7 +67,7 @@ class Jugabilidad():
             if var_glob.modo_const_parra_de_vid == True: # Parra de vid
                 verificacion = self.guardado.detectar_casillas_disponibles(fila, columna, 1, 1) #fila, columna, ancho, alto
                 if verificacion:
-                    guardado_confirmación = self.guardado.guardar_construccion('parra', fila, columna, 1, 1)
+                    guardado_confirmación = self.guardado.guardar_construccion('Parra', fila, columna, 1, 1)
                     if guardado_confirmación:
                         tile = Parra_de_vid((tile_x, tile_y-8), [var_glob.sprites_de_construcciones], 0, False)
                     else:
@@ -53,7 +76,7 @@ class Jugabilidad():
             elif var_glob.modo_const_lagar_de_cuero == True: # Lagares
                 verificacion = self.guardado.detectar_casillas_disponibles(fila, columna, 2, 1) #fila, columna, ancho, alto
                 if verificacion:
-                    guardado_confirmación = self.guardado.guardar_construccion('lagar', fila, columna, 2, 1)
+                    guardado_confirmación = self.guardado.guardar_construccion('Lagar', fila, columna, 2, 1)
                     if guardado_confirmación:
                         tile = Lagar_de_cuero((tile_x, tile_y), [var_glob.sprites_de_construcciones])
                     else:
@@ -67,7 +90,7 @@ class Jugabilidad():
             tile_x, tile_y = valores_construccion[1] * 24, valores_construccion[2] * 24
             for sprite in var_glob.sprites_de_construcciones:
                 for construccion in lista_de_construcciones:
-                    if valores_construccion[0] == 'parra':
+                    if valores_construccion[0] == 'Parra':
                         if isinstance(sprite, construccion) and sprite.rect.topleft == (tile_x, tile_y - 8):
                             sprite.kill()
                     else:
